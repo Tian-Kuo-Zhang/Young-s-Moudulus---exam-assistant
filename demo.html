@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📏 杨氏模量实验简化演示版 ✨</title>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        /* 全局美化样式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e8f0fe; /* 浅蓝色背景 */
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* 更深的阴影 */
+        }
+        h1 {
+            color: #4285f4; /* Google Blue */
+            text-align: center;
+            font-size: 2.2em;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            border-bottom: 4px solid #fbbc05; /* 黄色分割线 */
+        }
+        h3 {
+            color: #34495e;
+            border-left: 6px solid #1abc9c;
+            padding-left: 12px;
+            margin-top: 40px;
+            margin-bottom: 18px;
+            font-size: 1.4em;
+        }
+        h4 {
+            color: #1a73e8;
+            border-bottom: 1px solid #c4d7f5;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            font-size: 1.1em;
+        }
+        .input-section, .output-section {
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #d4e3fc;
+            border-radius: 12px;
+            background-color: #f7f9fc;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        /* 按钮样式 */
+        #calculate-button {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin-top: 30px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.1s;
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+            letter-spacing: 1px;
+        }
+        #calculate-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(52, 152, 219, 0.5);
+        }
+        /* 输出区域样式 */
+        #output-area {
+            display: none; 
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        #output-area > div {
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+        #results-calculations, #results-abstract, #results-conclusion {
+            grid-column: 1 / 3;
+        }
+        #chart-container {
+            grid-column: 1 / 3;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            height: 450px; /* 提高 Chart height */
+        }
+        .formula-box { 
+            border: 1px solid #aed6f1; /* 浅蓝色 */
+            padding: 20px; 
+            margin: 20px 0; 
+            background-color: #eaf4fd; /* 更淡的背景 */
+            border-radius: 8px; 
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        pre { 
+            background-color: #2c3e50; /* 深色背景 */
+            color: #ecf0f1; /* 浅色代码 */
+            padding: 18px; 
+            border-radius: 8px; 
+            overflow-x: auto; 
+            font-family: Consolas, monospace; 
+            font-size: 15px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .report-text { 
+            padding: 18px; 
+            border-left: 6px solid #f39c12; 
+            background-color: #fff9e6; /* 浅黄色背景 */
+            border-radius: 6px;
+        }
+        /* 表格样式 */
+        table {
+            border-collapse: separate; 
+            border-spacing: 0; 
+            width: 100%; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+            border-radius: 10px; 
+            overflow: hidden;
+            margin-top: 18px;
+        }
+        thead th {
+            background-color: #34495e; 
+            color: white; 
+            font-weight: bold; 
+            padding: 14px 8px; 
+            text-align: center;
+        }
+        tbody td {
+            border: 1px solid #f0f0f0; 
+            padding: 10px 8px; 
+            text-align: center; 
+            background-color: #ffffff;
+        }
+        tbody tr:nth-child(even) td {
+            background-color: #fcfcfc; 
+        }
+        input[type="number"] {
+            width: 90%; 
+            padding: 6px; 
+            border: 1px solid #a9c5ec; 
+            border-radius: 6px; 
+            text-align: center;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            border-color: #4285f4;
+            box-shadow: 0 0 5px rgba(66, 133, 244, 0.5);
+            outline: none;
+        }
+        .error-message {
+            color: #c0392b; 
+            background-color: #fde8e8; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border-left: 5px solid #c0392b;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>✨ 杨氏模量实验简化计算演示 ✨</h1>
+
+        <div class="input-section">
+            <h3>📝 一、输入原始数据 (单位: mm/kg)</h3>
+            
+            <div id="input-area">
+                </div>
+            
+            <button id="calculate-button" onclick="processData()">
+                🚀 开始计算、拟合并生成报告 📈
+            </button>
+        </div>
+
+        <div class="output-section">
+            <h3>🔬 二、计算结果与报告生成</h3>
+            
+            <div id="download-button-area" style="text-align: center; margin-bottom: 25px; display: none;">
+                <button id="download-doc-button" style="
+                    padding: 14px 35px; 
+                    background-color: #0f9d58; /* Google Green */
+                    color: white; 
+                    border: none; 
+                    border-radius: 30px; 
+                    cursor: pointer; 
+                    font-size: 18px; 
+                    font-weight: bold; 
+                    transition: background-color 0.3s ease;
+                    box-shadow: 0 4px 10px rgba(15, 157, 88, 0.5);
+                " onmouseover="this.style.backgroundColor='#0b7f43'" onmouseout="this.style.backgroundColor='#0f9d58'">
+                    ⬇️ 下载 Word 文档 (.doc) 报告
+                </button>
+            </div>
+            
+            <div id="output-area">
+                </div>
+        </div>
+
+        
+    </div>
+
+    <script src="demo.js"></script>
+</body>
+</html>
